@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>航班行李托运计算</title>
+
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+
+</head>
+<body>
+
+<h1 style="text-align: center">请输入旅客信息</h1>
+
+<div id="app">
+    <!--element写在vue中-->
+    <!--表单-->
+    <el-form :inline="true" :model="travaler" action="InformationIn.html" style="text-align: center" class="demo-form-inline">
+
+        <el-form-item label="行李类型">
+            <el-input v-model="travaler.lugtypes" placeholder="类型(1~10)"></el-input>
+        </el-form-item>
+        <br>
+        <el-form-item label="行李长度/cm">
+            <el-input v-model="travaler.lengths" placeholder="长度"></el-input>
+        </el-form-item>
+        <br>
+        <el-form-item label="行李宽度/cm">
+            <el-input v-model="travaler.widths" placeholder="宽度"></el-input>
+        </el-form-item>
+        <br>
+        <el-form-item label="行李高度/cm">
+            <el-input v-model="travaler.hights" placeholder="高度"></el-input>
+        </el-form-item>
+        <br>
+        <el-form-item label="行李重量/kg">
+            <el-input v-model="travaler.weights" placeholder="重量"></el-input>
+        </el-form-item>
+        <br>
+        <el-form-item label="是否国内">
+            <el-select v-model="travaler.internal" placeholder="是否国内">
+                <el-option label="国内" value=true></el-option>
+                <el-option label="国外" value=false></el-option>
+            </el-select>
+        </el-form-item>
+        <br>
+        <el-form-item label="座舱类型">
+            <el-select v-model="travaler.seatType" placeholder="座舱类型">
+                <el-option label="经济舱" value="economic"></el-option>
+                <el-option label="悦享经济舱、超级经济舱" value="super"></el-option>
+                <el-option label="头等舱" value="top"></el-option>
+                <el-option label="公务舱" value="affair"></el-option>
+            </el-select>
+        </el-form-item>
+        <br>
+        <el-form-item label="旅客类型">
+            <el-select v-model="travaler.trav_type" placeholder="旅客类型">
+                <el-option label="成人" value="adult"></el-option>
+                <el-option label="儿童" value="child"></el-option>
+                <el-option label="婴儿" value="baby"></el-option>
+                <el-option label="凤凰知音白金卡旅客" value="white-gold"></el-option>
+                <el-option label="凤凰知音金卡、银卡旅客" value="gold-sliver"></el-option>
+                <el-option label="星空联盟金卡旅客" value="star"></el-option>
+            </el-select>
+        </el-form-item>
+        <br>
+        <el-form-item label="航班类型">
+            <el-select v-model="travaler.flight" placeholder="航班类型">
+                <el-option label="区域一" value="area1"></el-option>
+                <el-option label="区域二" value="area2"></el-option>
+                <el-option label="区域三" value="area3"></el-option>
+                <el-option label="区域四" value="area4"></el-option>
+                <el-option label="区域五" value="area5"></el-option>
+            </el-select>
+        </el-form-item>
+
+        <br>
+        <el-form-item>
+            <el-button type="primary" @click="onCalculator">确认</el-button>
+        </el-form-item>
+
+    </el-form>
+    <p id="price">行李总价格为:0</p>
+    <hr>
+    <p>注解:</p>
+    <p><font size="3" color="#ff0000">行李信息用空格隔开</font></p>
+    <p><font size="3" color="#ff0000">特殊行李类型:</font></p>
+    <p><font size="3" color="#ff0000">
+        1、可免
+        费运输
+        的特殊
+        行李（1）残疾、伤、病旅客可免费托运一件小型可放入客舱的辅助
+        设备，或一件手动轮椅。除此之外，还可以免费运输一件
+        辅助设备，包括但不限于以下物品：
+        电动轮椅/电动代步工具/手动轮椅；
+        机械假肢及专用小型气瓶；
+        心脏起搏器或其他植入人体的装置；
+        便携式氧气浓缩机（POC）；
+        持续正压呼吸机（CPAP）；
+        其它内含锂电池的辅助设备等。
+        （2）婴儿旅客（无论何种舱位）可免费托运一件折叠式婴儿车
+        或摇篮或婴儿汽车安全座椅。
+        （3）导盲犬/助听犬/精神抚慰犬
+        （4）骨灰</font></p>
+    <p><font size="3" color="#ff0000">2、运动
+        器械器
+        具中的高尔夫球包、保龄球、滑翔伞/降落伞、滑雪/滑水用具（不
+        包括雪橇/水撬）、轮滑/滑板用具、潜水用具、射箭用具、
+        曲棍球用具、冰球用具、网球用具、登山用具、自行车</font></p>
+    <p><font size="3" color="#ff0000">3、运动
+        器械器
+        具中的皮划艇/独木舟、悬挂式滑翔运动用具、雪橇/水撬。
+        冲浪板、风帆冲浪用具、橡皮艇或船</font></p>
+    <p><font size="3" color="#ff0000">4、运动
+        器械器
+        具中的撑杆、标枪、单独包装的划船用具或浆、骑马用具</font></p>
+    <p><font size="3" color="#ff0000">5、睡袋、背包、野营用具、渔具、乐器、辅助设备（非残疾、
+        伤、病旅客托运）、可折叠婴儿床、可折叠婴儿车或婴儿
+        摇篮或婴儿汽车安全座椅（非婴儿旅客托运）</font></p>
+    <p><font size="3" color="#ff0000">6、小型电器或仪器、媒体设备</font></p>
+    <p><font size="3" color="#ff0000">7、可作为行李运输的枪支</font></p>
+    <p><font size="3" color="#ff0000">8、可作为行李运输的子弹</font></p>
+    <p><font size="3" color="#ff0000">9、小动物（仅限家庭驯养的猫、狗）
+        注：每个容器的总重量（包括其中的小动物及水与食物的
+        重量）</font></p>
+    <p><font size="3" color="#ff0000">10、其他</font></p>
+    <p><font size="3" color="#aaaaaa">航线区域:</font></p>
+    <p><font size="3" color="#aaaaaa">区域一: 美洲（除美国/加拿大外）/加勒比海地区与欧洲/非洲/中东/亚洲/西南太平洋之间的航
+        线；</font></p>
+    <p><font size="3" color="#aaaaaa">区域二：欧洲/中东与非洲/亚洲/西南太平洋之间航线；日本与西南太平洋之间航线；
+        日本/西南太平洋与亚洲（不含日本及西南太平洋）/非洲之间航线；</font></p>
+    <p><font size="3" color="#aaaaaa">区域三：加拿大与美洲（除美国/加拿大外）/加勒比海地区/欧洲/非洲/中东/亚洲/西南太平洋之间
+        航线；</font></p>
+    <p><font size="3" color="#aaaaaa">区域四：美国（含夏威夷）与美洲（除美国外）/加勒比海地区/欧洲/非洲/中东/亚洲/西南太平洋
+        之间航线；</font></p>
+    <p><font size="3" color="#aaaaaa">区域五：非洲与亚洲（除日本外)之间航线；欧洲与中东之间航线；亚洲（除日本)内航线；
+        美洲（除美国/加拿大）及加勒比海地区内航线；</font></p>
+    <!--版权所有&copy;-->
+</div>
+
+
+<script src="vue/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<script src="js/axios.js"></script>
+<!--引入css-->
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+
+<script >
+
+    new Vue({
+        el:"#app",
+        data() {
+            return {
+                totalPrice:1,
+                aaa:1,
+
+                /*我们将限定带入客舱行李的最大体积和/或重量。每位头等舱、公务舱旅客可携带两件
+随身物品，且每件重量不得超过 8 千克（17 磅）；每位经济舱旅客可携带一件随身物品，
+且重量不得超过 5 千克（11 磅）。*/
+                /*长、宽、高三边分别不得超过 55 厘米
+（22 英寸）、40 厘米（16 英寸）、20 厘米（8 英寸）*/
+                luggage:{
+                    number:0,
+                    name:'',
+                    weight:0,
+                    length:0,
+                    width:0,
+
+                },
+
+                travaler:{
+                    lugtypes:'',     //行李类型
+                    lengths:'',     //行李长度
+                    widths:'',      //行李宽度
+                    hights:'',      //行李高度
+                    weights:'',     //行李重量
+                    internal:null,  //是否国内
+                    seatType:'',    //座位类型
+                    trav_type:'',   //乘客类型
+                    flight:'',      //航班类型
+                },
+
+                dialogVisible:false,  //对话弹出
+                multipleSelection:[],
+
+            }
+        },
+
+        methods: {
+
+            //复选选中
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+                console.log(this.multipleSelection);
+            },
+
+            onCalculator() {
+                //alert("111");
+                var _this = this;
+                var tag=document.getElementById("price")
+
+                axios({
+                    method: "post",
+                    url: "http://localhost:8848/result",
+                    data: _this.travaaler
+                }).then(function(resp){
+                    if(resp.data == "-1"){
+                        //失败错误数据
+                        alert("行李数据异常，请参考注解重新输入");
+                    }
+                    else {
+                        //成功数据
+                        alert("总价格为:"+resp.data+"元");
+                        tag.innerHTML='行李总价格为:'+resp.data
+                    }
+                })
+            }
+
+        }
+    })
+</script>
+
+</body>
+</html>
